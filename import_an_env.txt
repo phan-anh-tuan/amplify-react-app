@@ -1,0 +1,27 @@
+Create the JSON string 
+    cat ./env-config.json | python -c 'import json,sys; print(json.dumps(sys.stdin.read()))'
+
+
+1. Create environment variable ENV_INFO with below content (see team-provider-info.json)
+    export ENV_INFO='{
+        "awscloudformation": {
+            "AuthRoleName": "amplify-amplifyapp-qa-115827-authRole",
+            "UnauthRoleArn": "arn:aws:iam::419790583141:role/amplify-amplifyapp-qa-115827-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::419790583141:role/amplify-amplifyapp-qa-115827-authRole",
+            "Region": "ap-southeast-2",
+            "DeploymentBucketName": "amplify-amplifyapp-qa-115827-deployment",
+            "UnauthRoleName": "amplify-amplifyapp-qa-115827-unauthRole",
+            "StackName": "amplify-amplifyapp-qa-115827",
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:419790583141:stack/amplify-amplifyapp-qa-115827/31d1ba50-165d-11eb-b098-02ad7bb01d7c",
+            "AmplifyAppId": "d1cdyv2f52wfp2"
+        },
+        "categories": {
+            "auth": {
+                "amplifyapp9d82fd61": {}
+            }
+        }
+    }'
+2. Create environment variable AWS_CONFIG with below content (see amplify/.config/local-aws-info.json)
+    export AWS_CONFIG='{"configLevel":"project","useProfile":true,"profileName":"default"}'
+
+3. amplify env import --name qa --config "${STACKINFO}" --awsInfo "${AWS_CONFIG}" --yes

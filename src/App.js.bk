@@ -1,0 +1,211 @@
+import React, { useState, useEffect }  from 'react';
+import logo from './logo.svg';
+import './App.css';
+// import { API, Storage } from 'aws-amplify';
+import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react'
+// import { listNotes } from './graphql/queries';
+// import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } from './graphql/mutations';
+
+import config from './aws-exports';
+
+import {
+  CognitoUserPool,
+  CognitoUserAttribute,
+  CognitoUser} from 'amazon-cognito-identity-js';
+
+  import * as AWS from 'aws-sdk/global';
+
+// import 'cross-fetch/polyfill';
+var AmazonCognitoIdentity = require('amazon-cognito-identity-js');
+
+
+
+var authenticationData = {
+  Username: 'tuaph@amazon.com',
+  Password: 'welc0me2amaz0n',
+  AuthParameters: {
+    'DEVICE_KEY': 'ap-southeast-2_42ccd422-6471-42bf-b8ca-a0122333f7894d6fcd'
+  }
+};
+
+var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(
+  authenticationData
+);
+
+var poolData = {
+  UserPoolId: config.aws_user_pools_id, // Your user pool id here
+  ClientId: config.aws_user_pools_web_client_id, // Your client id here
+};
+
+var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+var userData = {
+    Username: 'tuaph@amazon.com',
+    Pool: userPool,
+};
+var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+
+// cognitoUser.authenticateUser(authenticationDetails, {
+//   onSuccess: function(result) {
+//       // var accessToken = result.getAccessToken().getJwtToken();
+//       console.log(result);
+//       //POTENTIAL: Region needs to be set if not already set previously elsewhere.
+//       // AWS.config.region = config.aws_cognito_region;
+
+//       // AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+//       //     IdentityPoolId: config.aws_cognito_identity_pool_id, // your identity pool id here
+//       //     Logins: {
+//       //         // Change the key below according to the specific region your user pool is in.
+//       //         'cognito-idp.<region>.amazonaws.com/<YOUR_USER_POOL_ID>': result
+//       //             .getIdToken()
+//       //             .getJwtToken(),
+//       //     },
+//       // });
+
+//       //refreshes credentials using AWS.CognitoIdentity.getCredentialsForIdentity()
+//       // AWS.config.credentials.refresh(error => {
+//       //     if (error) {
+//       //         console.error(error);
+//       //     } else {
+//       //         // Instantiate aws sdk service objects now that the credentials have been updated.
+//       //         // example: var s3 = new AWS.S3();
+//       //         console.log('Successfully logged!');
+//       //     }
+//       // });
+//   },
+
+//   onFailure: function(err) {
+//       alert(err.message || JSON.stringify(err));
+//   },
+
+//   mfaRequired: function(codeDeliveryDetails) {
+//     var verificationCode = prompt('Please input verification code', '');
+//     cognitoUser.sendMFACode(verificationCode, this);
+//   }
+// });
+
+// var AWS = require('aws-sdk/dist/aws-sdk-react-native');
+// var cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider({ region: 'ap-southeast-2'});
+// var params = {
+//   AuthFlow: 'USER_SRP_AUTH',
+//   ClientId: config.aws_user_pools_web_client_id, /* required */
+//   AuthParameters: {
+//     'USERNAME': 'tuaph@amazon.com',
+//     'SRP_A' : 'ddd4e48573b0da94097bf3e4cfc2044fda80f270b7c7d6801a7a5171fa59b9d281b613fc941fed7ae838bc0fc0413bc7fa1afc3219180687622d78b95ec68f5fcb01081a41aacf14cdde39e0f506c62916b62901aae2539e4328326b9b6dadbace4b3f5745f3f6cd348c12e347e81694aae1f13724a251475a388e45b880c0e7954629e73649b092cc65ebca078ef9e2e10803bcd1c3f3a2e92dbd72452bbd430b9532f0891074eb31142633543a7c5157df6adaa6c57c68aaef5eaaf152e2d8f1453232a134eea3ce4839368db62f1082e37acbeab93b5e7ea735585c1150a4bd3788f957fbeefa88468575a29b494f76020464f9a57e6b4068f2ac940603fcb7e2a0b349b7cadd2d358b4cdc1cfaa448cb12c732fc4ae2b0b99bd1884ac8329550d63dd774bec7773df66d82051b776032ee6f6cc0d8acf6b03bb9b9d8156d0d3790438abc1c1f9b37e4d9f14f2056011b13c1f5e6471fded244ddfaff2cc369584931b3d40592f1464a6d2cbe15ec10e213d0a6671b4eccfbc4ea918ca5cc'
+//   }
+// };
+
+// cognitoidentityserviceprovider.initiateAuth(params, function(err, data) {
+//   if (err) console.log(err, err.stack); // an error occurred
+//   else    {
+//     params = {
+//       ChallengeName: 'PASSWORD_VERIFIER', /* required */
+//       ClientId: config.aws_user_pools_web_client_id, /* required */
+//       ChallengeResponses: {
+//         '<StringType>': 'STRING_VALUE',
+//         /* '<StringType>': ... */
+//       },
+//       ClientMetadata: {
+//         '<StringType>': 'STRING_VALUE',
+//         /* '<StringType>': ... */
+//       },
+//       Session: 'STRING_VALUE',
+//       UserContextData: {
+//         EncodedData: 'STRING_VALUE'
+//       }
+//     };
+//     console.log(data);           // successful response
+//   }
+// });
+
+
+// const initialFormState = { name: '', description: '' }
+
+
+function App() {
+  // const [notes, setNotes] = useState([]);
+  // const [formData, setFormData] = useState(initialFormState);
+
+  // useEffect(() => {
+  //   fetchNotes();
+  // }, []);
+
+  // async function fetchNotes() {
+  //   const apiData = await API.graphql({ query: listNotes });
+  //   const notesFromAPI = apiData.data.listNotes.items;
+  //   await Promise.all(notesFromAPI.map(async note => {
+  //     if (note.image) {
+  //       const image = await Storage.get(note.image);
+  //       note.image = image;
+  //     }
+  //     return note;
+  //   }))
+  //   setNotes(apiData.data.listNotes.items);
+  // }
+
+  // async function createNote() {
+  //   if (!formData.name || !formData.description) return;
+  //   await API.graphql({ query: createNoteMutation, variables: { input: formData } });
+  //   if (formData.image) {
+  //     const image = await Storage.get(formData.image);
+  //     formData.image = image;
+  //   }
+  //   setNotes([ ...notes, formData ]);
+  //   setFormData(initialFormState);
+  // }
+
+  // async function deleteNote({ id }) {
+  //   const newNotesArray = notes.filter(note => note.id !== id);
+  //   setNotes(newNotesArray);
+  //   await API.graphql({ query: deleteNoteMutation, variables: { input: { id } }});
+  // }
+
+  // async function onChange(e) {
+  //   if (!e.target.files[0]) return
+  //   const file = e.target.files[0];
+  //   setFormData({ ...formData, image: file.name });
+  //   await Storage.put(file.name, file);
+  //   fetchNotes();
+  // }
+
+  return (
+    <div className="App">
+      <h1>My Notes App</h1>
+      <input
+        // onChange={e => setFormData({ ...formData, 'name': e.target.value})}
+        placeholder="Note name"
+        // value={formData.name}
+      />
+      <input
+        // onChange={e => setFormData({ ...formData, 'description': e.target.value})}
+        placeholder="Note description"
+        // value={formData.description}
+      />
+      <input
+        type="file"
+        // onChange={onChange}
+      />
+
+      <button 
+        // onClick={createNote}
+      >Create Note</button>
+      {/* <div style={{marginBottom: 30}}>
+        {
+          notes.map(note => (
+            <div key={note.id || note.name}>
+              <h2>{note.name}</h2>
+              <p>{note.description}</p>
+              <button onClick={() => deleteNote(note)}>Delete note</button>
+              {
+                note.image && <img src={note.image} style={{width: 400}} />
+              }
+            </div>
+          ))
+        }
+      </div> */}
+      {/* <AmplifySignOut /> */}
+    </div>
+  );
+}
+
+export default withAuthenticator(App);
+// export default App;
